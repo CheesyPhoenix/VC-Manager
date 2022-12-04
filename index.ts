@@ -4,6 +4,7 @@ import {
 	Collection,
 	Events,
 	GatewayIntentBits,
+	Guild,
 	GuildBasedChannel,
 	GuildMember,
 } from "discord.js";
@@ -24,9 +25,16 @@ client.once(Events.ClientReady, (c) => {
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
-	const guild = newState.guild;
+	if (oldState.guild != undefined) {
+		await updateGuild(oldState.guild);
+	}
+	if (newState.guild != undefined && oldState.guild != newState.guild) {
+		await updateGuild(newState.guild);
+	}
+});
 
-	guild.channels.fetch();
+async function updateGuild(guild: Guild) {
+	await guild.channels.fetch();
 	const channels = guild.channels.cache.filter((channel) => {
 		if (channel.type == ChannelType.GuildVoice) {
 			if (
@@ -97,7 +105,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 	vcs.forEach((vc, i) => {
 		vc.setName("vc " + i);
 	});
-});
+}
 
 // Log in to Discord with your client's token
 
