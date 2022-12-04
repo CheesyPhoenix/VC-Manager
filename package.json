@@ -6,7 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon -e ts --exec \"npm run start\"",
-		"start": "ts-node-esm --transpile-only --experimental-specifier-resolution node ."
+		"start": "ts-node-esm --transpile-only --experimental-specifier-resolution node .",
+		"publish": "docker buildx build -t docker.cheesyphoenix.tk/cheesyphoenix/vcman-v2 --push ."
 	},
 	"keywords": [],
 	"author": "",

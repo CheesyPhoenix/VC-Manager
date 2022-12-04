@@ -43,7 +43,25 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
 	let vcIndex = 0;
 
-	const parent = channels.at(0)?.parent;
+	//const parent = channels.at(0)?.parent;
+	const parent = guild.channels.cache.find(
+		(channel) => channel.name.toLowerCase() == "managed vcs"
+	);
+
+	if (!parent) {
+		const newParent = await guild.channels.create({
+			name: "Managed VCs",
+			type: ChannelType.GuildCategory,
+		});
+
+		guild.channels.create({
+			name: "vc 0",
+			type: ChannelType.GuildVoice,
+			parent: newParent.id,
+		});
+
+		return;
+	}
 
 	const vcs: GuildBasedChannel[] = [];
 
