@@ -81,7 +81,9 @@ async function updateGuild(guild: Guild) {
 		).length;
 
 		if (memberCount == 0 && i != Array.from(channels).length - 1) {
-			vc.delete();
+			try {
+				vc.delete();
+			} catch (error) {}
 		} else {
 			vcIndex++;
 			vcs.push(vc);
