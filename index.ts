@@ -7,6 +7,7 @@ import {
 	Guild,
 	GuildBasedChannel,
 	GuildMember,
+	SlashCommandBuilder,
 } from "discord.js";
 
 import dotenv from "dotenv";
@@ -18,10 +19,6 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildVoiceStates,
 	],
-});
-
-client.once(Events.ClientReady, (c) => {
-	console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
@@ -108,6 +105,36 @@ async function updateGuild(guild: Guild) {
 		vc.setName("vc " + i);
 	});
 }
+
+// slash commands
+const reorganizeCommand = new SlashCommandBuilder()
+	.setName("reorganize")
+	.setDescription("Reorganizes the managed vcs");
+
+client.on(Events.InteractionCreate, (interaction) => {
+	if (
+		interaction.isChatInputCommand() &&
+		interaction.commandName == "reorganize" &&
+		interaction.guild
+	) {
+		updateGuild(interaction.guild);
+		interaction.reply({ content: "Reorganizing...", ephemeral: true });
+	}
+});
+
+client.once(Events.ClientReady, async (c) => {
+	console.log(`Ready! Logged in as ${c.user.tag}`);
+
+	let commandFound = false;
+
+	(await client.application?.commands.fetch())?.forEach((command) => {
+		if (command.name == "reorganize") commandFound = true;
+	});
+
+	if (!commandFound) {
+		client.application?.commands.create(reorganizeCommand);
+	}
+});
 
 // Log in to Discord with your client's token
 
